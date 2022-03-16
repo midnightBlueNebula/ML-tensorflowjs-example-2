@@ -59,8 +59,9 @@ async function loadAndRunModel(){
   
   console.log(imageTensor.shape);
   
-  let cropStartPoint = [3, 50, 0];
-  let cropSize = [200, 200, 3];
+  let cropStartPoint = [15, 170, 0];
+  let cropSize = [345, 345, 3];
+  
   let croppedTensor = tf.slice(imageTensor, cropStartPoint, cropSize);
   
   let resizedTensor = tf.image.resizeBilinear(croppedTensor, [192, 192], true).toInt();
