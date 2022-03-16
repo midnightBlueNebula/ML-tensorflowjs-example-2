@@ -15,7 +15,9 @@
  * =============================================================================
  */
 
-const body = document.querySelector("body");
+var body = document.querySelector("body");
+
+const EXAMPLE_IMG = document.querySelector("#exampleImg");
 
 const status = document.getElementById('status');
 if (status) {
@@ -46,14 +48,26 @@ const elementFactory = (tagName, parent, text, styles) => {
 }
 
 const MODEL_PATH = "https://tfhub.dev/google/tfjs-model/movenet/singlepose/lightning/4";
+
 let movenet = undefined;
 
 async function loadAndRunModel(){
   movenet = await tf.loadGraphModel(MODEL_PATH, { fromTFHub: true });
   
   let exampleInputTensor = tf.zeros([1, 192, 192, 3], "int32");
+  let imageTensor = tf.browser.fromPixels(EXAMPLE_IMG);
   
-  let tensorOutput = movenet.predict(exampleInputTensor);
+  console.log(imageTensor.shape);
+  
+  let cropStartPoint = [3, 50, 0];
+  let cropSize = [200, 200, 3];
+  let croppedTensor = tf.slice(imageTensor, cropStartPoint, cropSize);
+  
+  let resizedTensor = tf.image.resizeBilinear(croppedTensor, [192, 192], true).toInt();
+  
+  console.log(resizedTensor.shape);
+  
+  let tensorOutput = movenet.predict(tf.expandDims(resizedTensor));
   let arratOutput = await tensorOutput.array();
   
   elementFactory("p", body, JSON.stringify(arratOutput), {position: "relative", top:"50px"});
