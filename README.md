@@ -1,1 +1,1 @@
-# ML-tensorflowjs-example-2
+Browser based machine learning example with tensorflow.js 
